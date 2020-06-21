@@ -63,12 +63,17 @@ void qs(int a[],int l,int r)
 }
 int select(int a[],int l,int r,int k)
 {
+    if(test)printf("<%d %d %d>\n",l,r,k);
     assert(r-l>0);
-    if(r-l==1) return a[l];
+    if(r-l==1)
+    {
+	assert(k==l);
+	return a[l];
+    }
     int mid=part(a,l,r);
     if(mid==k) return a[mid];
     if(k<mid) return select(a,l,mid,k);
-    else return select(a,mid+1,r,k-mid-1);
+    else return select(a,mid+1,r,k);
 }
 long long up_bound=10001;
 int up_max=0x7fffffff;
@@ -131,13 +136,14 @@ int main()
 	{
 	    //iassert(vec.size()>n+1);
 	    //sort(vec.begin(),vec.end());
-	    qs(&vec[0],0,vec.size());
-	    if(test)
+	    //qs(&vec[0],0,vec.size());
+	    /*if(test)
 		for(int i=0;i<vec.size();i++)
 		{
 		    printf("[%d]",vec[i]);
 		}
-	    printf("%d\n",vec[n]);
+		printf("%d\n",vec[n]);*/
+	    printf("%d\n",select(&vec[0],0,vec.size(),n));
 	    break;
 	    
 	}
