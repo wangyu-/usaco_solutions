@@ -38,21 +38,25 @@ int part(int a[],int l,int r)
     swap(a[l],a[idx]);
     int m=a[l];
     int p1=l,p2=r-1;
-    while(p1<p2)
+    while(1)
     {
-	while(p1<p2&&a[p2]>m )
-	{
-	    p2--;
-	}
-	if(p1<p2) a[p1]=a[p2];
-	while(p1<p2&&a[p1]<=m)
+	while(a[p1]<=m)
 	{
 	    p1++;
+	    if(p1>p2) goto end;
 	}
-	if(p1<p2) a[p2]=a[p1];
+	swap(a[p1],a[p2]);
+	while(a[p2]>m)
+	{
+	    p2--;
+	    if(p1>p2) goto end;
+	}
+	swap(a[p1],a[p2]);
     }
-    a[p1]=m;
-    return p1;
+end:
+    swap(a[l],a[p1-1]);
+    return p1-1;
+    
 }
 void qs(int a[],int l,int r)
 {
@@ -60,15 +64,6 @@ void qs(int a[],int l,int r)
     int mid=part(a,l,r);
     qs(a,l,mid);
     qs(a,mid+1,r);
-}
-int select(int a[],int l,int r,int k)
-{
-    assert(r-l>0);
-    if(r-l==1) return a[l];
-    int mid=part(a,l,r);
-    if(mid==k) return a[mid];
-    if(k<mid) return select(a,l,mid,k);
-    else return select(a,mid+1,r,k-mid-1);
 }
 long long up_bound=10001;
 int up_max=0x7fffffff;

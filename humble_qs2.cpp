@@ -61,15 +61,6 @@ void qs(int a[],int l,int r)
     qs(a,l,mid);
     qs(a,mid+1,r);
 }
-int select(int a[],int l,int r,int k)
-{
-    assert(r-l>0);
-    if(r-l==1) return a[l];
-    int mid=part(a,l,r);
-    if(mid==k) return a[mid];
-    if(k<mid) return select(a,l,mid,k);
-    else return select(a,mid+1,r,k-mid-1);
-}
 long long up_bound=10001;
 int up_max=0x7fffffff;
 void dfs(int idx,long long v)
