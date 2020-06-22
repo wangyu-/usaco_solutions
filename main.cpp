@@ -26,77 +26,77 @@ int test=0;
 
 struct max_flow_t  //adapted from sidekicks.cpp
 {
-	static const int MAXV=1000+10;
-	static const int inf=1000*1000*1000;
+    static const int MAXV=1000+10;
+    static const int inf=1000*1000*1000;
 
-	struct edge_t
-	{
-		int cap=-inf;
-		//int flow;
-	};
-	int source=-1,target=-1;
-	edge_t e[MAXV][MAXV];
-	vector<int> nbs[MAXV];
-	int pre[MAXV];
-	map<int,bool> visited;
+    struct edge_t
+    {
+	int cap=-inf;
+	//int flow;
+    };
+    int source=-1,target=-1;
+    edge_t e[MAXV][MAXV];
+    vector<int> nbs[MAXV];
+    int pre[MAXV];
+    map<int,bool> visited;
 
-	bool dfs_visit(int x) //visit node x, hopping to reach sink
-	{
-		if (x == target) return true;
-		visited[x] = true;
-		for (int n : nbs[x]) 
-			if (visited.find(n)==visited.end() && e[x][n].cap>0) 
-			{
-				pre[n] = x;
-				if (dfs_visit(n)) return true;
-			}
-		return false;
-	}
-
-	void augment(int n, int delta) //agument a path
-	{
-		while (n != source) {
-			e[pre[n]][n].cap -= delta;
-			e[n][pre[n]].cap += delta;
-			n = pre[n];
-		}
-	}
-
-	int bottleneck(int n)//find min cap along path
-	{
-		int bottle=inf;
-		while (n!=source) 
-		{
-			bottle=min(bottle,e[pre[n]][n].cap);
-			n=pre[n];
-		}
-		return bottle;
-	}
-	int max_flow()
-	{
-		assert(source!=-1&&target!=-1);
-		visited.clear();
-		int total_flow = 0;
-		while (dfs_visit(source)) //find a path to sink
-		{
-			int bottle = bottleneck(target); // find the bottleneck of the path
-			total_flow += bottle;
-			augment(target, bottle);// augment the path
-			visited.clear();
-		}
-		return total_flow;
-	}
-    void add_edge(int x,int y,int c)
-	{
-	    if(e[x][y].cap==-inf)
+    bool dfs_visit(int x) //visit node x, hopping to reach sink
+    {
+	if (x == target) return true;
+	visited[x] = true;
+	for (int n : nbs[x]) 
+	    if (visited.find(n)==visited.end() && e[x][n].cap>0) 
 	    {
-		nbs[x].push_back(y);
-		nbs[y].push_back(x);
-		e[x][y].cap=0;
-		e[y][x].cap=0;
+		pre[n] = x;
+		if (dfs_visit(n)) return true;
 	    }
-	    e[x][y].cap+=c;
+	return false;
+    }
+
+    void augment(int n, int delta) //agument a path
+    {
+	while (n != source) {
+	    e[pre[n]][n].cap -= delta;
+	    e[n][pre[n]].cap += delta;
+	    n = pre[n];
 	}
+    }
+
+    int bottleneck(int n)//find min cap along path
+    {
+	int bottle=inf;
+	while (n!=source) 
+	{
+	    bottle=min(bottle,e[pre[n]][n].cap);
+	    n=pre[n];
+	}
+	return bottle;
+    }
+    int max_flow()
+    {
+	assert(source!=-1&&target!=-1);
+	visited.clear();
+	int total_flow = 0;
+	while (dfs_visit(source)) //find a path to sink
+	{
+	    int bottle = bottleneck(target); // find the bottleneck of the path
+	    total_flow += bottle;
+	    augment(target, bottle);// augment the path
+	    visited.clear();
+	}
+	return total_flow;
+    }
+    void add_edge(int x,int y,int c)
+    {
+	if(e[x][y].cap==-inf)
+	{
+	    nbs[x].push_back(y);
+	    nbs[y].push_back(x);
+	    e[x][y].cap=0;
+	    e[y][x].cap=0;
+	}
+	e[x][y].cap+=c;
+    }
 }f;
 
 int main()
