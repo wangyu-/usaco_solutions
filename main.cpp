@@ -13,6 +13,8 @@
 #include <queue>
 #include <algorithm>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include <set>
 #include <string>
 #include <math.h>
@@ -31,19 +33,19 @@ struct max_flow_t  //adapted from sidekicks.cpp
 
     struct edge_t
     {
-	int cap=-inf;
+	int cap;
 	//int flow;
     };
     int source=-1,target=-1;
-    edge_t e[MAXV][MAXV];
+    unordered_map<int,edge_t> e[MAXV];
     vector<int> nbs[MAXV];
     int pre[MAXV];
-    map<int,bool> visited;
+    unordered_set<int> visited;
 
     bool dfs_visit(int x) //visit node x, hopping to reach sink
     {
 	if (x == target) return true;
-	visited[x] = true;
+	visited.insert(x);
 	for (int n : nbs[x]) 
 	    if (visited.find(n)==visited.end() && e[x][n].cap>0) 
 	    {
@@ -86,9 +88,9 @@ struct max_flow_t  //adapted from sidekicks.cpp
 	}
 	return total_flow;
     }
-    void add_edge(int x,int y,int c)
+    void add_edge(int x,int y,int c)//direct edge
     {
-	if(e[x][y].cap==-inf)
+	if(e[x].find(y)==e[x].end())
 	{
 	    nbs[x].push_back(y);
 	    nbs[y].push_back(x);
@@ -96,6 +98,7 @@ struct max_flow_t  //adapted from sidekicks.cpp
 	    e[y][x].cap=0;
 	}
 	e[x][y].cap+=c;
+	//e[y][x].cap+=c;
     }
 }f;
 
