@@ -35,6 +35,7 @@ struct max_flow_t  //adapted from sidekicks.cpp
     {
 	int cap=0;
 	int flow=0;	
+	int left(){return cap-flow;}
     };
     int source=-1,target=-1;
     unordered_map<int,edge_t> e[MAXV];
@@ -47,7 +48,7 @@ struct max_flow_t  //adapted from sidekicks.cpp
 	if (x == target) return true;
 	visited.insert(x);
 	for (int n : nbs[x]) 
-	    if (visited.find(n)==visited.end() && e[x][n].flow<e[x][n].cap) 
+	    if (visited.find(n)==visited.end() && e[x][n].left()>0) 
 	    {
 		pre[n] = x;
 		if (dfs_visit(n)) return true;
@@ -69,7 +70,7 @@ struct max_flow_t  //adapted from sidekicks.cpp
 	int bottle=inf;
 	while (n!=source) 
 	{
-	    bottle=min(bottle,e[pre[n]][n].cap-e[pre[n]][n].flow);
+	    bottle=min(bottle,e[pre[n]][n].left());
 	    n=pre[n];
 	}
 	return bottle;
