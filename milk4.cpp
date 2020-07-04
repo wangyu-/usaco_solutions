@@ -32,18 +32,7 @@ char dp[mod][20000+2];
 char d2[mod][20000+2];
 char d3[mod][20000+2];
 const int inf=110;
-int check(int idx,int last_idx,int cap,int left_n)
-{
-    for(int i=0;i<=Q;i++)
-    {
-	if(d2[idx][i]!=left_n) continue;
-	if(cap-i>0&&(cap-i)%num[last_idx]==0)
-	{
-	    return i;
-	}
-    }
-    return -1;
-}
+
 int main()
 {
 #ifndef TEST
@@ -65,22 +54,16 @@ int main()
 	int n1=num[i];
 	for(int j=0;j<=Q;j++)
 	{
-	    char &b=dp[i-1][j];
 	    char &c=dp[i][j];
 	    c=inf;
-	    //dp[i][j]=dp[i-1][j];
 	    if(j>=n1)
 	    {	
 		char np=dp[i-1][j-n1]+1;
 		char op=dp[i][j-n1];
 		if(np<c)  //pick jth num ,new
-		{
 		    c=np;
-		}
 		if(op<c) //continue pick jth num
-		{
 		    c=op;
-		}
 	    }
 	    d2[i][j]=dp[i][j];
 	    // printf("<%d,%d,%d> ",i,j,dp[i][j]);
@@ -100,6 +83,7 @@ int main()
     int left_n=dp[P][Q];
     vector<int>res;
     int last_idx=P;
+    /*
     for(int i=P;i>=0;i--)
     {
 	if(d2[i][Q]==left_n)
@@ -109,19 +93,19 @@ int main()
 	    left_n--;
 	    break;
 	}
-    }
+	}*/
     for(int i=0;i<=Q;i++)
     {
 	d3[0][i]=0;
     }
     d3[0][0]=1;
-    for(int i=1;i<=dp[P][Q]&&left_n;i++)
+    for(int i=0;i<=dp[P][Q]&&left_n;i++)
     {
 	int n1=res[i-1];
 	for(int j=0;j<=Q;j++)
 	{
 	    d3[i][j]=0;
-	    if(j>=n1)
+	    if(j>=n1&&i)
 	    {
 		if(d3[i-1][j-n1]) d3[i][j]=1;
 		if(d3[i][j-n1]) d3[i][j]=1;
