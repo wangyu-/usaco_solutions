@@ -124,9 +124,10 @@ int main()
 	else
 	{
 	    clr_bit(guess,i);
-	    verify(guess,len);
+	    //verify(guess,len);
 	}
     }
+    if((guess&0x1)==0) verify(guess,nb); //set from and to
     printf("%d %d %d\n",guess,from,to);
     
 
