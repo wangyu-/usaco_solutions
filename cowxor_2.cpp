@@ -40,8 +40,8 @@ string bin(int a,int len)
     }
     return res;
 }
-const int nb=21; 
-int state[1024*1024*2+5]={0}; 
+const int nb=22;    //add a dummy bit, the first bit is always zero
+int state[1024*1024*2+5]={0};  //dummy bit doesn't use space
 int get_bit(int a,int idx)
 {
     return a>>(nb-1-idx)&0x1;
@@ -75,9 +75,9 @@ int verify(int goal,int len)
 	    cnt[j]+=get_bit(nn,j);
 	    if(get_bit(goal,j)==1&&cnt[j]<1)
 		ok=0;
-	    if(cnt[j]%2!=0)
+	    if(cnt[j]%2!=cnt[0]%2)
 		set_bit(mask,j);
-	    if(get_bit(goal,j)!=0)
+	    if(get_bit(goal,j)!=get_bit(goal,0))
 		set_bit(goal2,j);
 	}
 	if(ok&&state[goal2^mask])
