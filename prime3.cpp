@@ -72,6 +72,49 @@ struct trie_t
 	}
 }root;
 char arr[7][7];
+vector<string> ans;
+vector<string> nums;
+int cnt=1;
+//unordered_map<string,vector<int>> cache;
+vector<int> *cache[161051]={0};
+int cal_hash(char *a)
+{
+	int res=0;
+	for(int i=0;i<5;i++)
+	{
+		res*=11;
+		if(a[i]!=0)
+			res+=a[i]-'0'+1;
+		else
+			res+=0;
+	}
+	return res;
+}
+vector<int> * get_idx(char *pat)
+{
+	int hh=cal_hash(pat);
+	//static string s(5,0);
+	//memcpy(&s[0],pat,5);
+	//string s(pat,pat+5);
+	if(cache[hh]!=0) return cache[hh];
+	cache[hh]=new vector<int>;
+	//if(cache.find(s)!=cache.end()) return &cache[s];
+
+	vector<int> &vec=*cache[hh];
+	for(int i=0;i<nums.size();i++)
+	{
+		char *s=(char*)nums[i].c_str();
+		int not_ok=0;
+		for(int j=0;j<5;j++)
+		{
+			if(pat[j]!=0&&s[j]!=pat[j]) {not_ok=1;break;}
+		}
+		if(not_ok) continue;
+		vec.push_back(i);
+	}
+	return &vec;
+
+}
 int ok()
 {
 	const int test1=0;
@@ -93,26 +136,58 @@ int ok()
 	for(int i=1;i<=5;i++)
 	{	
 		tmp[i-1]=arr[i][i];
-		if(root.find(tmp)==0) {if(test1)printf("<3>");return 0;}
+		//if(root.find(tmp)==0) {if(test1)printf("<3>");return 0;}
+		if(get_idx(tmp)->size()==0) return 0;
 	}
 	memset(tmp,0,sizeof(tmp));
 	for(int i=1;i<=5;i++)
 	{	
 		tmp[i-1]=arr[6-i][i];
-		if(root.find(tmp)==0) {if(test1)printf("<4>");return 0;}
+		//if(root.find(tmp)==0) {if(test1)printf("<4>");return 0;}
+		if(get_idx(tmp)->size()==0) return 0;
 	}
 	if(test1)printf("<ok>");
 	return 1;
 }
-vector<string> ans;
-vector<string> nums;
-int cnt=1;
+char * cache2[161051][5];
+void get_can(char *a,int x,char can[])
+{
+	int hh=cal_hash(a);
+	//s.push_back('0'+x);
+	if(cache2[hh][x-1])
+	{
+		memcpy(can,cache2[hh][x-1],10);
+		return ;
+	}
+	int can_cnt=0;
+	memset(can,0,10);
+	vector<int> &vec=*get_idx(a);
+	for(int i=0;i<vec.size();i++)
+	{
+		string &s=nums[vec[i]];
+		if(can[s[x-1]-'0']==0)
+		{
+			can[s[x-1]-'0']=1;
+			can_cnt++;
+			//if(can_cnt==10) return;
+		}
+	}
+	cache2[hh][x-1]=new char[10];
+	memcpy(cache2[hh][x-1],can,10);
+
+	//vector<char> &vec2=cache2[s];
+	//for(int i=0;i<10;i++)
+	//	vec2.push_back(can[i]);
+
+
+	return ;
+}
 int search_cnt=0;
 void dfs(int depth)
 {
 	search_cnt++;
 	if(ok()==0) return;
-	if(cnt==25)
+	if(depth==24)
 	{
 		string tmp;
 		for(int i=1;i<=5;i++)
@@ -123,55 +198,83 @@ void dfs(int depth)
 		//printf("%s\n",tmp.c_str());
 		return ;
 	}
-	int best=999;
-	trie_t *best_p1,*best_p2;
-	int best_i,best_j;
+	/*
+	int best_res=0;
 	for(int i=1;i<=5;i++)
 		for(int j=1;j<=5;j++)
 		{
 			if(arr[i][j]!=0) continue;
-			if(i!=1&&arr[i-1][j]==0) continue;
-			if(j!=1&&arr[i][j-1]==0) continue;
-			char *tmp1=arr[i]+1;
-			int len1=j-1;
-			char tmp2[6]={0};
-			for(int k=1;k<=i-1;k++)
-				tmp2[k-1]=arr[k][j];
-			int len2=i-1;
-			auto p1=root.find(tmp1);
-			if(p1==0) continue;
-			auto p2=root.find(tmp2);
-			if(p2==0) continue;
 			int cnt=0;
-			int xxx=min(p1->nums.size(),p2->nums.size());
+			char *a=arr[i]+1;
+			char b[6];
+			for(int k=1;k<=5;k++)
+			{
+				b[k-1]=arr[k][j];
+			}
+			for(int k=1;k<=5;k++)
+			{
+				if(a[k-1]) cnt++;
+				if(b[k-1]) cnt++;
+			}
+			if(cnt>best_res)  best_res=cnt;
+		}*/
+	int best=99999;
+	int best_i,best_j;
+	char can1[10];
+	char can2[10];
+	for(int i=1;i<=5;i++)
+		for(int j=1;j<=5;j++)
+		{
+			if(arr[i][j]!=0) continue;
+			int cnt=0;
+			char *a=arr[i]+1;
+			char b[6];
+			for(int k=1;k<=5;k++)
+			{
+				b[k-1]=arr[k][j];
+			}
+			for(int k=1;k<=5;k++)
+			{
+				if(a[k-1]) cnt++;
+				if(b[k-1]) cnt++;
+			}
+			//if(cnt!=best_res) continue;
+			cnt=0;
+			get_can(a,j,can1);
+			get_can(b,i,can2);
 			for(int k=0;k<=9;k++)
 			{
-				if(p1->cld['0'+k]&&p2->cld['0'+k])
-					cnt++;
+				if(can1[k]&&can2[k]) cnt++;
 			}
 			if(cnt==0) return;
-			if(xxx<best)
+			cnt*=1000;
+			//cnt+=rand()%1000;
+			if(i==j) cnt-=500;
+			if(i+j==6) cnt-=500;
+			if(cnt<best) 
 			{
-				best=xxx;
-				best_p1=p1;
-				best_p2=p2;
+				best=cnt;
 				best_i=i;
 				best_j=j;
 			}
-			
-
 		}
 	int i=best_i,j=best_j;
-	auto p1=best_p1,p2=best_p2;
+
+	char *a=arr[i]+1;
+	char b[5];
+	for(int k=1;k<=5;k++)
+	{
+		b[k-1]=arr[k][j];
+	}
+	get_can(a,j,can1);
+	get_can(b,i,can2);
 	for(int k=0;k<=9;k++)
 	{
-		if(p1->cld['0'+k]&&p2->cld['0'+k])
+		if(can1[k]&&can2[k])
 		{
 			arr[i][j]='0'+k;
-			cnt++;
 			dfs(depth+1);
 			arr[i][j]=0;
-			cnt--;
 		}
 	}
 
@@ -182,6 +285,9 @@ int main()
     freopen (TASKNAME".in", "r",stdin);
     freopen (TASKNAME".out", "w",stdout);
 #endif           
+    //cache.reserve(100000);
+    //cache2.reserve(100000);
+    srand(12345);
     init_prime();
     int filter,start;
     scanf("%d %d",&filter,&start);
@@ -220,6 +326,8 @@ int main()
 	    printf("\n");
     }
     if(test)printf("<<%d>>\n",search_cnt);
+    //if(test) printf("cache_size=%d\n",cache.size());
+    //if(test) printf("cache2_size=%d\n",cache2.size());
 
     return 0;
 }
