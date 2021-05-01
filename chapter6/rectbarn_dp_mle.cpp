@@ -21,11 +21,11 @@ int test=1;
 int test=0;
 #endif
 char mp[3005][3005];
-int h[2][3005];
-//int l[2][3005];
-//int r[2][3005];
-int l2[2][3005];
-int r2[2][3005];
+int h[3005][3005];
+int l[3005][3005];
+int r[3005][3005];
+int l2[3005][3005];
+int r2[3005][3005];
 int main()
 {
 #ifndef TEST
@@ -54,31 +54,29 @@ int main()
     {
 	    for(int j=1;j<=C;j++)
 	    {
-		    if(mp[i][j]) h[i%2][j]=0;
-		    else h[i%2][j]=h[(i-1)%2][j]+1;
+		    if(mp[i][j]) h[i][j]=0;
+		    else h[i][j]=h[i-1][j]+1;
 	    }
 	    int left_rock=0;
 	    for(int j=1;j<=C;j++)
 	    {
-		    int l;
-		    if(mp[i][j]) left_rock=j,l=0;
-		    else l=j-left_rock;
-		    if(h[i%2][j]==0) l2[i%2][j]=0;
-		    else if(h[i%2][j]==1) l2[i%2][j]=l;
-		    else l2[i%2][j]=min(l,l2[(i-1)%2][j]);
+		    if(mp[i][j]) left_rock=j,l[i][j]=0;
+		    else l[i][j]=j-left_rock;
+		    if(h[i][j]==0) l2[i][j]=0;
+		    else if(h[i][j]==1) l2[i][j]=l[i][j];
+		    else l2[i][j]=min(l[i][j],l2[i-1][j]);
 	    }
 	    int right_rock=C+1;
 	    for(int j=C;j>=1;j--)
 	    {
-		    int r;
-		    if(mp[i][j]) right_rock=j,r=0;
-		    else r=right_rock-j;
-		    if(h[i%2][j]==0) r2[i%2][j]=0;
-		    else if(h[i%2][j]==1) r2[i%2][j]=r;
-		    else r2[i%2][j]=min(r,r2[(i-1)%2][j]);
+		    if(mp[i][j]) right_rock=j,r[i][j]=0;
+		    else r[i][j]=right_rock-j;
+		    if(h[i][j]==0) r2[i][j]=0;
+		    else if(h[i][j]==1) r2[i][j]=r[i][j];
+		    else r2[i][j]=min(r[i][j],r2[i-1][j]);
 	    }
 	    for(int j=0;j<=C;j++)
-	    	best=max(best,h[i%2][j]*(l2[i%2][j]+r2[i%2][j]-1));
+	    	best=max(best,h[i][j]*(l2[i][j]+r2[i][j]-1));
     }
     printf("%d\n",best);
     return 0;
