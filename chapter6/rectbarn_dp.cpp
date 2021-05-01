@@ -46,8 +46,6 @@ int main()
     for(int j=1;j<=C;j++)
     {
 	    h[0][j]=0;
-	    l2[0][j]=99999;
-	    r2[0][j]=99999;
     }
     int best=0;
     for(int i=1;i<=R;i++)
